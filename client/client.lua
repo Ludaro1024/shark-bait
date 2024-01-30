@@ -35,11 +35,14 @@ end)
 
 function sharkAttack(coords, shark)
     -- SetPedCombatAttributes(shark, 55, true)
-
+    -- maybe
+    -- dict = "creatures@shark@move"
+    -- anim = "attack_jump"
     dict = "creatures@shark@melee@streamed_core@"
     anim = "attack"
     dict2 = "creatures@shark@move"
     anim2 = "attack_player"
+    anim3 = "attack_cam"
     RequestAnimDict(dict)
     while not HasAnimDictLoaded(dict) do
         Wait(1)
@@ -49,30 +52,48 @@ function sharkAttack(coords, shark)
     while not HasAnimDictLoaded(dict2) do
         Wait(1)
     end
+
+    -- scene = NetworkCreateSynchronisedScene(coords.x, coords.y, coords.z, GetEntityRotation(PlayerPedId()), 2, false, true,
+    --     1.0, 0.0,
+    --     1000.0)
+    -- NetworkAttachSynchronisedSceneToEntity(scene, shark, 0)
+    -- NetworkAddPedToSynchronisedScene(PlayerPedId(), scene, dict2, anim2, 1.0, -1.0, -1, 0, 0, 0)
+    -- NetworkAddPedToSynchronisedScene(shark, scene, dict, anim, 1.0, -1.0, -1, 0, 0, 0)
+    -- AttachEntityToEntity(shark, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 0x2e28), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    --     false,
+    --     false, false, false, 2, true)
+    -- NetworkStartSynchronisedScene(scene)
+    -- localScene = NetworkGetLocalSceneFromNetworkId(scene)
+    -- repeat Wait(0) until not IsSynchronizedSceneRunning(localScene)
+    -- Citizen.Wait(3000)
+    -- DetachEntity(shark, true, false)
+    -- ClearPedTasksImmediately(shark)
+    -- ClearPedTasksImmediately(PlayerPedId())
+    -- -- blood here
+    -- Citizen.Wait(2000)
+    -- DoScreenFadeOut(1000)
+    -- Wait(1000)
+
+    -- Wait(2000)
+    -- Wait(1000)
+    -- DoScreenFadeIn(1000)
+
     scene = NetworkCreateSynchronisedScene(coords.x, coords.y, coords.z, GetEntityRotation(PlayerPedId()), 2, false, true,
         1.0, 0.0,
         1000.0)
     NetworkAttachSynchronisedSceneToEntity(scene, shark, 0)
+    NetworkAttachSynchronisedSceneToEntity(scene, PlayerPedId(), 0) -- maybe not needed or wrong
     NetworkAddPedToSynchronisedScene(PlayerPedId(), scene, dict2, anim2, 1.0, -1.0, -1, 0, 0, 0)
     NetworkAddPedToSynchronisedScene(shark, scene, dict, anim, 1.0, -1.0, -1, 0, 0, 0)
-    AttachEntityToEntity(shark, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 0x2e28), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        false,
-        false, false, false, 2, true)
+    NetworkAddSynchronisedSceneCamera(scene, GetHashKey(dict2), anim3, coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, 0.0,
+        0.0)
     NetworkStartSynchronisedScene(scene)
     localScene = NetworkGetLocalSceneFromNetworkId(scene)
     repeat Wait(0) until not IsSynchronizedSceneRunning(localScene)
     Citizen.Wait(3000)
-    DetachEntity(shark, true, false)
     ClearPedTasksImmediately(shark)
     ClearPedTasksImmediately(PlayerPedId())
     -- blood here
-    Citizen.Wait(2000)
-    DoScreenFadeOut(1000)
-    Wait(1000)
-
-    Wait(2000)
-    Wait(1000)
-    DoScreenFadeIn(1000)
 end
 
 function SpawnAgressiveShark(coords)
