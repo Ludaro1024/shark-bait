@@ -4,6 +4,8 @@ Hello! this script will make it so that if the player is in the water with enoug
 
 Note that this isnt the final version, and that this is a side project of mine, if you have any issues regarding it please create a issue on github and ill get onto it as quickly as i can, ur free to edit and fork it and use it wherever u like, but PLEASE keep in mind that this took 2-3 days because of no one telling me how shark animations work or how in general sharks attack, so a little bit of a credit when using it somewhere else would be appreciated. thank you. i plan on refining the animation and the sharks ability to follow the player in the future and make it more menacing..
 
+Preview: https://streamable.com/aigyj0
+
 Planned Features:
 [ ] - Blood
 [ ] - Better Animation
