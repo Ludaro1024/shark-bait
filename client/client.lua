@@ -1,6 +1,6 @@
 Citizen.CreateThread(function()
 	while true do
-		Wait(Config.RefreshTime)
+		Wait(Config.RefreshTime * 1000)
 		local ped = PlayerPedId()
 		local coords = GetEntityCoords(ped)
 		local isinwater = IsPedSwimming(ped)

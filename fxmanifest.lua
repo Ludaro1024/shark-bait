@@ -3,10 +3,10 @@ game "gta5"
 lua54 "yes"
 
 
-name "Boilerplate"
-description "Boilerplate"
+name "shark-bait"
+description "Makes Sharks attack you when you are in deep water."
 author "Ludaro"
-version "0"
+version "1"
 
 client_scripts {
     "client/*.lua",
