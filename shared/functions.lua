@@ -1,5 +1,6 @@
 function Config_Framework_Notify_Client(msg)
-    ESX.ShowNotification(msg)
+    TriggerEvent('chatMessage', "SYSTEM", { 255, 0, 0 }, msg)
+    -- ESX.ShowNotification(msg)
 end
 
 function Config_Framework_SetDead_Client()
@@ -8,8 +9,8 @@ function Config_Framework_SetDead_Client()
     -- SetEntityHealth(playerPed, 0)
     --  TriggerServerEvent('esx_ambulancejob:setDeathStatus', false)
 
-    -- in my example i will play an animation that sets him to a random beach, and then plays an animation of him waking up, (simulating he died in rp)
-    -- but your free to do the other things explained above
+    -- in my example i will play an animation that sets him to a random beach (predefined coords), and then plays an animation of him waking up, (simulating he died in rp)
+    -- but your free to do the other things explained above or whatever you want
     SetEntityCoords(PlayerPedId(), -2127.6650, -510.0569, 2.1578, false, false, false, true)
     SetEntityHeading(PlayerPedId(), 109.2602)
     local dict = "anim@scripted@heist@ig25_beach@male@"
