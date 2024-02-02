@@ -1,8 +1,9 @@
 Config = {}
 Config.Locale = 'en'
-Config.WaterHeight = 200.0  -- if above this height,it will activate the shark before a warning..Activated = function(sender, index)
+Config.WaterHeight = 5.0    -- if above this height,it will activate the shark before a warning and be aware that it doesnt go over 300m (300m is max)
 Config.TimeUntilAttack = 10 -- seconds
 Config.RefreshTime = 5000   -- how often the script checks if the player is in DEEP water
+Config.Debug = false        -- if you set this to true it will show you how deep you are (if you are in dange aswell)
 Translation = {
     ['en'] = {
         ["sharkspawned"] = "lookout a shark is onto you..",

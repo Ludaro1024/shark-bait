@@ -8,7 +8,19 @@ Citizen.CreateThread(function()
 		local indanger = isinwater and (waterheight or 0) >= Config.WaterHeight and GetVehiclePedIsIn(ped, false) == 0
 		local inAttack = IsEntityPlayingAnim(ped, "creatures@shark@melee@streamed_core@", "attack_player", 3)
 		-- Check if the player is in water and the water height is above the threshold
-		print(indanger)
+		if Config.Debug then
+			if indanger then
+				local waterheight = PerformRaycastFromPed(ped)
+				print("You are " ..
+					math.round(waterheight) .. " m deep " .. "and in the danger zone! (" .. Config.WaterHeight .. "m)")
+			elseif isinwater == false then
+				print("You are not even in da water")
+			else
+				print("You are " ..
+					math.round(waterheight) ..
+					" m deep " .. "and not in the danger zone! (" .. Config.WaterHeight .. "m)")
+			end
+		end
 		if indanger then
 			if DoesEntityExist(shark) then
 			else
@@ -38,6 +50,12 @@ AddEventHandler("onResourceStop", function(resourceName)
 end)
 
 function sharkAttack(shark)
+	waterheight = PerformRaycastFromPed(PlayerPedId())
+	isinrange = (waterheight or 0) >= Config.WaterHeight
+	if IsPedSwimming(PlayerPedId()) == false or isinrange == false then
+		DespawnShark(shark, false)
+		return
+	end
 	local dict = "creatures@shark@move"
 	local anim = "attack"
 	local anim2 = "attack_player"
@@ -83,12 +101,16 @@ function sharkAttack(shark)
 	repeat Wait(0) until GetSynchronizedScenePhase(localScene) >= 0.25
 	ClearPedTasks(shark)
 	TaskPlayAnim(shark, dict, "swim_turn_r", 8.0, 1.0, -1, 1, 0, 0, 0, 0)
+	TaskGoToCoordAnyMeans(shark, 0.0, 0.0, 0.0, 1.0, 0, false, 786603, 0xbf800000)
+	RemoveBlip(aggresiveblip)
+
 	NetworkStopSynchronisedScene(scene)
-	DespawnShark(shark, true)
 	Citizen.Wait(1000)
 	Config_Framework_SetDead_Client()
 	DoScreenFadeIn(1000)
-	attack = true
+	Citizen.Wait(2000)
+	DeleteEntity(shark)
+	attack = nil
 end
 
 function makeBlood()
@@ -116,134 +138,11 @@ function makeBlood()
 	-- end)
 end
 
--- RegisterCommand('testan', function(source, args, rawCommand)
---     local dict = "creatures@shark@move"
---     local anim = "attack"
-
---     RequestAnimDict(dict)
---     while not HasAnimDictLoaded(dict) do
---         Wait(1)
---     end
-
---     local ped = PlayerPedId()
-
---     if DoesEntityExist(ped) then
---         TaskPlayAnim(ped, dict2, anim2, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
-
---         local model = GetHashKey('a_c_sharktiger')
---         RequestModel(model)
---         while not HasModelLoaded(model) do
---             Wait(1)
---         end
-
---         local coords2 = GetEntityCoords(ped)
---         local shark = CreatePed(4, model, coords2.x, coords2.y, coords2.z, 0.0, true, true)
-
---         if DoesEntityExist(shark) then
---             -- Set the shark's health to a higher value to prevent it from dying
---             SetEntityHealth(shark, 200) -- Adjust the value as needed
-
---             local coords = GetEntityCoords(shark)
---             local scene = NetworkCreateSynchronisedScene(coords.x, coords.y, coords.z, GetEntityRotation(PlayerPedId()),
---                 2, true, false,
---                 1.0, 0.0, 1.0, -1, -1)
-
---             if scene ~= 0 then
---                 NetworkAddSynchronisedSceneCamera(scene, dict, "attack_cam")
---                 NetworkAddPedToSynchronisedScene(shark, scene, dict, anim, 8.0, 8.0, 0, 0, 1.0, 1)
---                 NetworkAddPedToSynchronisedScene(PlayerPedId(), scene, dict, "attack_player", 8.0, 8.0, 0.0, 0, 1.0, 1)
---                 NetworkStartSynchronisedScene(scene)
---                 Wait(0)
---                 local localScene = NetworkGetLocalSceneFromNetworkId(scene)
---                 Citizen.Wait(1000)
---                 DoScreenFadeOut(1000)
---                 repeat
---                     Wait(0)
---                     -- print(GetSynchronizedScenePhase(localScene))
---                 until GetSynchronizedScenePhase(localScene) >= 0.25
---                 print("wat")
---                 ClearPedTasks(shark)
---                 TaskPlayAnim(shark, dict, "swim_turn_r", 8.0, 1.0, -1, 1, 0, 0, 0, 0)
---                 NetworkStopSynchronisedScene(scene)
---                 Citizen.Wait(1000)
---                 DoScreenFadeIn(1000)
---             else
---                 print("Failed to create synchronized scene")
---             end
---         else
---             print("Failed to create the shark ped.")
---         end
---     else
---         print("PlayerPedId() is invalid.")
---     end
--- end)
-
--- RegisterCommand('testan2', function(source, args, rawCommand)
---     dict = "creatures@shark@move"
---     anim = "attack"
---     dict2 = "creatures@shark@melee@streamed_core@"
---     anim2 = "attack_player"
-
---     RequestAnimDict(dict)
---     while not HasAnimDictLoaded(dict) do
---         Wait(1)
---     end
-
---     RequestAnimDict(dict2)
---     while not HasAnimDictLoaded(dict2) do
---         Wait(1)
---     end
-
---     local ped = PlayerPedId()
-
---     if DoesEntityExist(ped) then
---         TaskPlayAnim(ped, dict2, anim2, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
-
---         local model = GetHashKey('a_c_sharktiger')
---         RequestModel(model)
---         while not HasModelLoaded(model) do
---             Wait(1)
---         end
-
---         local coords2 = GetEntityCoords(ped)
---         local shark = CreatePed(4, model, coords2.x, coords2.y, coords2.z, 0.0, true, true)
-
---         if DoesEntityExist(shark) then
---             -- Set the shark's health to a higher value to prevent it from dying
---             SetEntityHealth(shark, 200) -- Adjust the value as needed
-
---             local coords = GetEntityCoords(shark)
---             local scene = NetworkCreateSynchronisedScene(coords.x, coords.y, coords.z, GetEntityRotation(PlayerPedId()),
---                 2, true, false,
---                 1.0, 0.0, 1.0, -1, -1)
-
---             if scene ~= 0 then
---                 NetworkAddSynchronisedSceneCamera(scene, dict, "attack_cam")
---                 NetworkAddPedToSynchronisedScene(shark, scene, dict, anim, 8.0, 8.0,
---                     0)
---                 NetworkAddPedToSynchronisedScene(PlayerPedId(), scene, dict, "attack_player", 8.0, 8.0, 0)
---                 NetworkStartSynchronisedScene(scene)
---                 TaskPlayAnim(shark, dict2, anim, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
---                 Wait(0)
---                 local localScene = NetworkGetLocalSceneFromNetworkId(scene)
---                 repeat
---                     Wait(0)
---                     -- print(GetSynchronizedScenePhase(localScene))
---                 until GetSynchronizedScenePhase(localScene) >= 0.259
---                 ClearPedTasks(shark)
---                 TaskPlayAnim(shark, dict, "accelerate_turn_r", 8.0, 1.0, -1, 1, 0, 0, 0, 0)
---             end
---         end
---     end
--- end)
-
-function DespawnShark(shark, attack)
+function DespawnShark(shark)
 	if DoesEntityExist(shark) == false then
 		return
 	end
-	if attack == nil or false then
-		Config_Framework_Notify_Client(Locale("sharkdespawned"))
-	end
+	Config_Framework_Notify_Client(Locale("sharkdespawned"))
 	TaskGoToCoordAnyMeans(shark, 0.0, 0.0, 0.0, 1.0, 0, false, 786603, 0xbf800000)
 	RemoveBlip(aggresiveblip)
 	Citizen.Wait(2000)
