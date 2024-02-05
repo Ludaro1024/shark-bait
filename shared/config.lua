@@ -10,6 +10,11 @@ Translation = {
         ["sharkdespawned"] = "the shark has lost your scent",
         ["sharkname"] = "shark",
     },
+    ["da"] = {
+        ["sharkspawned"] = "Vær opmærksom, haj haj..",
+        ["sharkdespawned"] = "du slap fri denne gang",
+        ["sharkname"] = "Sød lille haj efter dig",
+    },
     ["de"] = {
         ["sharkspawned"] = "Achtung, ein Hai ist auf dich aufmerksam geworden..",
         ["sharkdespawned"] = "Der Hai hat deine Spur verloren",
