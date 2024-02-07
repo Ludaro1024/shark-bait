@@ -1,13 +1,14 @@
 Citizen.CreateThread(function()
 	while true do
+		::checkagain::
 		Wait(Config.RefreshTime * 1000)
 		local ped = PlayerPedId()
 		local coords = GetEntityCoords(ped)
 		local isinwater = IsPedSwimming(ped)
 		local waterheight = PerformRaycastFromPed(ped)
-		local indanger = isinwater and (waterheight or 0) >= Config.WaterHeight and GetVehiclePedIsIn(ped, false) == 0
+		local indanger = isinwater and (waterheight or 0) >= Config.WaterHeight and GetVehiclePedIsIn(ped, false) == 0 and
+			IsInConfigRange()
 		local inAttack = IsEntityPlayingAnim(ped, "creatures@shark@melee@streamed_core@", "attack_player", 3)
-		-- Check if the player is in water and the water height is above the threshold
 		if Config.Debug then
 			if indanger then
 				local waterheight = PerformRaycastFromPed(ped)
@@ -23,10 +24,11 @@ Citizen.CreateThread(function()
 		end
 		if indanger then
 			if DoesEntityExist(shark) then
+				DespawnShark(shark)
 			else
 				shark = SpawnAgressiveShark(coords)
 				Citizen.Wait(Config.TimeUntilAttack * 1000)
-				if indanger then
+				if indanger and isinwater then
 					sharkAttack(shark)
 				else
 					Config_Framework_Notify_Client(Locale("sharkdespawned"))
@@ -48,6 +50,20 @@ AddEventHandler("onResourceStop", function(resourceName)
 		end
 	end
 end)
+
+function IsInConfigRange()
+	for i = 1, #Config.Zones do
+		if isInRange(Config.Zones[i][1], Config.Zones[i][2]) then
+			return true
+		end
+	end
+	return false
+end
+
+function isInRange(coords, range)
+	local distance = #(GetEntityCoords(PlayerPedId()) - coords)
+	return distance <= range
+end
 
 function sharkAttack(shark)
 	waterheight = PerformRaycastFromPed(PlayerPedId())
@@ -113,31 +129,6 @@ function sharkAttack(shark)
 	attack = nil
 end
 
-function makeBlood()
-	-- dict = "core"
-	-- name = "blood_shark_attack"
-	-- coords = GetEntityCoords(PlayerPedId())
-	-- x, y, z = table.unpack(coords)
-
-	-- CreateThread(function()
-	-- 	RequestNamedPtfxAsset(dict)
-	-- 	-- Wait for the particle dictionary to load.
-	-- 	while not HasNamedPtfxAssetLoaded(dict) do
-	-- 		Citizen.Wait(0)
-	-- 	end
-
-	-- 	local a = 0
-	-- 	while a < 4 do
-	-- 		StartParticleFxNonLoopedAtCoord(name, x, y, z, 0.0, 0.0, 0.0, 0.2, false, false, false)
-
-	-- 		a = a + 1
-
-	-- 		-- Wait 500ms before triggering the next particle.
-	-- 		Citizen.Wait(500)
-	-- 	end
-	-- end)
-end
-
 function DespawnShark(shark)
 	if DoesEntityExist(shark) == false then
 		return
@@ -170,7 +161,6 @@ function SpawnAgressiveShark(coords)
 	return shark
 end
 
--- Function to perform a raycast from a ped downward and return the Z coordinate if it hits a surface
 function PerformRaycastFromPed(ped)
 	local playerPos = GetEntityCoords(ped, true)
 	local startPoint = vector3(playerPos.x, playerPos.y, playerPos.z)    -- Adjust the starting height as needed
