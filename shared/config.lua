@@ -4,8 +4,7 @@ Config.WaterHeight = 150.0                                          -- if above 
 Config.TimeUntilAttack = 10                                         -- how many seconds until the shark goes and attacks you!
 Config.RefreshTime = 5                                              -- how often the script checks if the player is in DEEP water (seconds)
 Config.Debug = false                                                -- if you set this to true it will show you how deep you are (if you are in danger aswell)
-Config.Zones = { { vector3(-1602.0, -1192.0, 0.0), 20 }, vector3() } -- if you want to add more zones, just add more coords, and the radius of the zone
-
+Config.Zones = {  } -- if you want to add more zones, just add more coords, and the radius of the zone as a table example: { vector3(-1602.0, -1192.0, 0.0), 20 },
 Translation = {
     ['en'] = {
         ["sharkspawned"] = "lookout a shark is onto you..",
