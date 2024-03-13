@@ -12,9 +12,9 @@ client_scripts {
     "client/*.lua",
 }
 
-server_scripts {
-    "server/*.lua",
-}
+- -server_scripts {
+ --   "server/*.lua",
+--}
 
 shared_scripts {
     --'@ox_lib/init.lua',
