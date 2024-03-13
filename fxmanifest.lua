@@ -12,7 +12,7 @@ client_scripts {
     "client/*.lua",
 }
 
-- -server_scripts {
+--server_scripts {
  --   "server/*.lua",
 --}
 
